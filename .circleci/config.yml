@@ -29,10 +29,10 @@ jobs:
           to: 's3://tqngdev'
 
 workflows:
-  s3-example:
-    jobs: 
+  Example-Workflow:
+    jobs:
       - Build-Source-Code
-      - Deploy-Artifact
+      - Deploy-Artifact:
           requires:
             - Build-Source-Code
 
