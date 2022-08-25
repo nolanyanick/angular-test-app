@@ -12,15 +12,24 @@ jobs:
       - checkout
       - restore_cache:
           key: tq-{{ .Branch }}-{{ checksum "package.json" }}
-      - run: npm install
+      - run: 
+          name: Install Dependencies
+          command: npm install
       - save_cache:
           key: tq-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - "node_modules"
-      - run: 
+
+      - run:
+          name: Build
           command: |
-            npm install -g @angular/cli
-            ng v && ng build --configuration development
+            if [ $CIRCLE_BRANCH = 'master' ]; then
+              npm run build-prod
+            fi
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist
 
   Deploy-Artifact:
     docker:
