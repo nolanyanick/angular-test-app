@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   aws-s3: circleci/aws-s3@3.0
 jobs:
-  Build-Source-Code:
+  Build-Source-Code-Dev:
     working_directory: ~/tq
     docker:
       - image: circleci/node:17.2-browsers
@@ -19,8 +19,8 @@ jobs:
             - "node_modules"
       - run: 
           command: |
-            ng build --configuration development --progress             
-            ls -al
+            npm install -g @angular/cli
+            npm install && ng v && ng build --configuration development
 
   Deploy-Artifact:
     docker:
@@ -33,10 +33,10 @@ jobs:
 workflows:
   Example-Workflow:
     jobs:
-      - Build-Source-Code
+      - Build-Source-Code-Dev
       - Deploy-Artifact:
           requires:
-            - Build-Source-Code
+            - Build-Source-Code-Dev
 
 
 
