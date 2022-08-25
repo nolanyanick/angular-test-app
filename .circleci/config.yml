@@ -1,10 +1,14 @@
 version: 2.1
+orbs:
+  aws-s3: circleci/aws-s3@3.0
 jobs:
-  build:
+  Build Source Code:
     working_directory: ~/tq
     docker:
       - image: circleci/node:17.2-browsers
-    steps:
+
+
+    steps:      
       - checkout
       - restore_cache:
           key: tq-{{ .Branch }}-{{ checksum "package.json" }}
@@ -13,10 +17,24 @@ jobs:
           key: tq-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - "node_modules"
-      - run: echo 'Done'      
+      - run: 
+          command: |
+            ng build --configuration development --progress             
+            ls -al
 
+  Deploy Artifact:
+    steps:      
+      - aws-s3/sync:                      
+          from: bucket
+          to: 's3://tqngdev'
 
-
+workflows:
+  s3-example:
+    jobs: 
+      - Build Source Code
+      - Deploy Artifact
+        requires:
+          - Build Source Code
 
 
 
