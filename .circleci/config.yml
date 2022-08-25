@@ -5,7 +5,7 @@ jobs:
   Build-Source-Code:
     working_directory: ~/tq
     docker:
-      - image: 'cimg/python:3.6'
+      - image: circleci/node:17.2-browsers
 
 
     steps:      
@@ -23,6 +23,8 @@ jobs:
             ls -al
 
   Deploy-Artifact:
+    docker:
+      - image: 'cimg/python:3.6'
     steps:      
       - aws-s3/sync:                      
           from: bucket
