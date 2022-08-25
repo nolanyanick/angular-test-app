@@ -19,7 +19,7 @@ jobs:
             - "node_modules"
       - run: 
           command: |
-            npm install -g @angular/cli            
+            npm install @angular/cli            
 
   Deploy-Artifact:
     docker:
