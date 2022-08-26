@@ -38,7 +38,10 @@ jobs:
     steps:      
       - attach_workspace:
           at: .
-      - aws-s3/sync:                      
+      - aws-s3/sync:      
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-region: AWS_REGION_BLUE
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY            
           from: dist
           to: 's3://tqngdev'
 
@@ -60,7 +63,7 @@ workflows:
   Dev-Workflow:
     jobs:
       - Build-Source-Code-Dev
-      - Deploy-Source-Code-Dev-test:
+      - Deploy-Source-Code-Dev:
           requires: 
             - Build-Source-Code-Dev
 
