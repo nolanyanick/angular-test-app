@@ -7,8 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "builcd-dev": "ng build --configuration development --progress",
-    "builcd-prod": "ng build --configuration production --progress"
+    "build-dev": "ng build --configuration development --progress",
+    "build-prod": "ng build --configuration production --progress"
   },
   "private": true,
   "dependencies": {
