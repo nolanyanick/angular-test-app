@@ -52,7 +52,7 @@ jobs:
       - run:
           name: Deploy
           command: |
-            if [ $CIRCLE_BRANCH = 'master' ]; then
+            if [ $CIRCLE_BRANCH = 'main' ]; then
               aws s3 sync dist/ s3://tqng/ --delete --exact-timestamps;
             fi          
 
