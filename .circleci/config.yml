@@ -32,21 +32,35 @@ jobs:
           paths:
             - .
 
-  Deploy-baby:
+  Deploy-Source-Code-Dev:
     docker:
       - image: 'cimg/python:3.6'
     steps:      
       - attach_workspace:
           at: .
       - aws-s3/sync:                      
-          from: .
+          from: dist
           to: 's3://tqngdev'
+
+  Deploy-Source-Code-Dev-test:
+    working_directory: ~/repo
+    docker:
+      - image: innovatorjapan/awscli:latest
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Deploy
+          command: |
+            if [ $CIRCLE_BRANCH = 'master' ]; then
+              aws s3 sync dist/angular-material-starter/ s3://angular-material-starter-bucket/ --delete --exact-timestamps;
+            fi          
 
 workflows:
   Dev-Workflow:
     jobs:
       - Build-Source-Code-Dev
-      - Deploy-baby:
+      - Deploy-Source-Code-Dev:
           requires: 
             - Build-Source-Code-Dev
 
