@@ -56,7 +56,7 @@ jobs:
           name: Deploy
           command: |
             if [ $CIRCLE_BRANCH = 'main' ]; then
-              aws s3 sync dist/ s3://tqng/ --delete --exact-timestamps;
+              aws s3 sync dist/angular-test-app/ s3://tqng/ --delete --exact-timestamps;
             fi          
 
 workflows:
