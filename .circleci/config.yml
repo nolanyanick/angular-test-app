@@ -13,7 +13,7 @@ jobs:
       - restore_cache:
           key: tq-{{ .Branch }}-{{ checksum "package.json" }}
       - run: 
-          name: Install Dependencies
+          name: Install-Dependencies
           command: npm install
       - save_cache:
           key: tq-{{ .Branch }}-{{ checksum "package.json" }}
@@ -21,10 +21,11 @@ jobs:
             - "node_modules"
 
       - run:
-          name: Build
+          name: Build-Dev
           command: |
-            if [ $CIRCLE_BRANCH = 'master' ]; then
-              npm run build-prod
+            if [ $CIRCLE_BRANCH = 'main' ]; then
+              echo 'Beginning build...'
+              npm run build-dev
             fi
       - persist_to_workspace:
           root: .
@@ -43,9 +44,6 @@ workflows:
   Example-Workflow:
     jobs:
       - Build-Source-Code-Dev
-      - Deploy-Artifact:
-          requires:
-            - Build-Source-Code-Dev
 
 
 
