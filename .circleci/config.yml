@@ -21,7 +21,7 @@ jobs:
             - "node_modules"
 
       - run:
-          name: Build-Dev
+          name: Build
           command: |
             if [ $CIRCLE_BRANCH = 'main' ]; then
               echo 'Beginning build...'
@@ -32,18 +32,23 @@ jobs:
           paths:
             - .
 
-  Deploy-Artifact:
+  Deploy-baby:
     docker:
       - image: 'cimg/python:3.6'
     steps:      
+      - attach_workspace:
+          at: .
       - aws-s3/sync:                      
-          from: bucket
+          from: .
           to: 's3://tqngdev'
 
 workflows:
-  Example-Workflow:
+  Dev-Workflow:
     jobs:
       - Build-Source-Code-Dev
+      - Deploy-baby:
+          requires: 
+            - Build-Source-Code-Dev
 
 
 
