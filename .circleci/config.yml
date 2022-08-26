@@ -1,19 +1,18 @@
 version: 2.1
-orbs:
-  aws-s3: circleci/aws-s3@3.0
+
 jobs:
+
   Build-Source-Code-Dev:
     working_directory: ~/tq
     docker:
       - image: circleci/node:17.2-browsers
-
 
     steps:      
       - checkout
       - restore_cache:
           key: tq-{{ .Branch }}-{{ checksum "package.json" }}
       - run: 
-          name: Install-Dependencies
+          name: Install Dependencies
           command: npm install
       - save_cache:
           key: tq-{{ .Branch }}-{{ checksum "package.json" }}
@@ -21,7 +20,7 @@ jobs:
             - "node_modules"
 
       - run:
-          name: Build
+          name: Build Source Code
           command: |
             if [ $CIRCLE_BRANCH = 'main' ]; then
               echo 'Beginning build...'
@@ -33,19 +32,6 @@ jobs:
             - .
 
   Deploy-Source-Code-Dev:
-    docker:
-      - image: 'cimg/python:3.6'
-    steps:      
-      - attach_workspace:
-          at: .
-      - aws-s3/sync:      
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-region: AWS_REGION_BLUE
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY            
-          from: dist
-          to: 's3://tqngdev'
-
-  Deploy-Source-Code-Dev-test:
     working_directory: ~/repo
     docker:
       - image: innovatorjapan/awscli:latest
@@ -53,96 +39,17 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Deploy
+          name: Deploy To AWS-S3
           command: |
             if [ $CIRCLE_BRANCH = 'main' ]; then
+              echo 'Beginning deploy ...'
               aws s3 sync dist/angular-test-app/ s3://tqng/ --delete --exact-timestamps;
             fi          
 
 workflows:
-  Dev-Workflow:
+  Development:
     jobs:
       - Build-Source-Code-Dev
-      - Deploy-Source-Code-Dev-test:
+      - Deploy-Source-Code-Dev:
           requires: 
             - Build-Source-Code-Dev
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# version: 2.1
-# jobs:
-#   # running commands on a basic image
-#   Hello-World:
-#     docker:
-#       - image: alpine:3.15
-#     steps:
-#       - run:
-#           name: Saying Hello
-#           command: |
-#             echo 'Hello World!'
-#             echo 'This is the delivery pipeline'
-#   # fetching code from the repo
-#   Fetch-Code:
-#     docker:
-#       - image: cimg/base:2021.04
-#     steps:
-#       - checkout
-#       - run:
-#           name: Getting the Code
-#           command: |
-#             ls -al
-#             ng build --configuration 
-#   # running a node container
-#   Using-Node:
-#     docker:
-#       - image: cimg/node:17.2
-#     steps:
-#       - run:
-#           name: Running the Node Container
-#           command: |
-#             node -v
-#   Now-Complete:
-#     docker:
-#       - image: alpine:3.15
-#     steps:
-#       - run:
-#           name: Approval Complete
-#           command: |
-#             echo 'The work is now complete.'
-
-# workflows:
-#   Example-Workflow:
-#     jobs:
-#       - Hello-World
-#       - Fetch-Code:
-#           requires:
-#             - Hello-World
-#       - Using-Node:
-#           requires:
-#             - Fetch-Code
-#       - Hold-for-Approval:
-#           type: approval
-#           requires:
-#             - Using-Node
-#             - Fetch-Code
-#       - Now-Complete:
-#           requires:
-#             - Hold-for-Approval
