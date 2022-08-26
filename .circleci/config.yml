@@ -53,14 +53,14 @@ jobs:
           name: Deploy
           command: |
             if [ $CIRCLE_BRANCH = 'master' ]; then
-              aws s3 sync dist/angular-material-starter/ s3://angular-material-starter-bucket/ --delete --exact-timestamps;
+              aws s3 sync dist/ s3://tqng/ --delete --exact-timestamps;
             fi          
 
 workflows:
   Dev-Workflow:
     jobs:
       - Build-Source-Code-Dev
-      - Deploy-Source-Code-Dev:
+      - Deploy-Source-Code-Dev-test:
           requires: 
             - Build-Source-Code-Dev
 
